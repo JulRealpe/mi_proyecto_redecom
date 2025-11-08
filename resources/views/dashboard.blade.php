@@ -2,38 +2,24 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Bienvenido al Panel de Control</h1>
 
-    <div class="row">
-        <!-- Tarjeta Categorías -->
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Categorías</h5>
-                    <a href="{{ route('categorias.index') }}" class="btn btn-primary">Ver categorías</a>
-                </div>
-            </div>
-        </div>
+    <!-- Banner superior -->
+    <div class="text-center mb-4">
+        <img src="https://www.polisura.edu.co/wp-content/uploads/2025/03/electricidad.jpg" 
+             alt="Redecom Ingeniería"
+             class="img-fluid rounded-4 shadow-lg"
+             style="max-height: 280px; object-fit: cover; width: 100%;">
+    </div>
 
-        <!-- Tarjeta Cuentas -->
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Cuentas</h5>
-                    <a href="{{ route('cuentas.index') }}" class="btn btn-success">Ver cuentas</a>
-                </div>
-            </div>
-        </div>
+    <h1 class="mb-4 text-center fw-bold text-primary">REDECOM INGENIRIA S.A.S</h1>
+    <p>Diseño de instalaciones eléctricas, mantenimiento y automatización industrial.</p>
 
-        <!-- Tarjeta Transacciones -->
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Transacciones</h5>
-                    <a href="{{ route('transacciones.index') }}" class="btn btn-warning text-white">Ver transacciones</a>
-                </div>
-            </div>
-        </div>
+    @if (session('success'))
+        <div class="alert alert-success text-center">{{ session('success') }}</div>
+    @endif
+
+    <div class="row g-4 justify-content-center">
+
     </div>
 </div>
 @endsection

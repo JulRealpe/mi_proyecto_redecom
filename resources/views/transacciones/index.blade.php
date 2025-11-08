@@ -4,7 +4,7 @@
 <div class="container py-4">
     <div class="card shadow-sm border-0">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">📋 Lista de Transacciones</h4>
+            <h4 class="mb-0"> Lista de Transacciones</h4>
             <a href="{{ route('transacciones.create') }}" class="btn btn-light btn-sm">
                 <i class="bi bi-plus-circle me-1"></i> Nueva Transacción
             </a>

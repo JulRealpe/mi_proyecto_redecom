@@ -13,16 +13,48 @@
     <div class="collapse navbar-collapse" id="navbarMain">
       <ul class="navbar-nav ms-auto">
 
-        <!-- Menú desplegable de Inicio -->
+        <!-- Menú desplegable Gestión -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
-            Inicio
+            Gestión
           </a>
           <ul class="dropdown-menu dropdown-menu-end bg-dark border-0 shadow">
-            <li><a class="dropdown-item text-white bg-dark-hover" href="{{ route('categorias.index') }}">Categorías</a></li>
-            <li><a class="dropdown-item text-white bg-dark-hover" href="{{ route('cuentas.index') }}">Cuentas</a></li>
-            <li><a class="dropdown-item text-white bg-dark-hover" href="{{ route('transacciones.index') }}">Transacciones</a></li>
+            <li>
+              <a class="dropdown-item text-white bg-dark-hover" href="{{ route('categorias.index') }}">
+                Categorías
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-white bg-dark-hover" href="{{ route('cuentas.index') }}">
+                Cuentas
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-white bg-dark-hover" href="{{ route('transacciones.index') }}">
+                Transacciones
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-white bg-dark-hover" href="{{ route('usuarios.index') }}">
+                Usuarios
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-white bg-dark-hover" href="{{ route('materiales.index') }}">
+                Materiales
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-white bg-dark-hover" href="{{ route('tecnicos.index') }}">
+                Técnicos
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-white bg-dark-hover" href="{{ route('ordenes.index') }}">
+                Órdenes de Servicio
+              </a>
+            </li>
           </ul>
         </li>
 
@@ -39,7 +71,7 @@
   </div>
 </nav>
 
-<!-- Estilo adicional para mejorar hover -->
+<!-- Estilo adicional para hover -->
 <style>
   .dropdown-menu a.dropdown-item:hover {
     background-color: #495057 !important;

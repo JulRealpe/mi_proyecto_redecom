@@ -1,84 +1,82 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Gasto Financiero') }}</title>
-
-    <!-- Bootstrap -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REDECOM - Sistema de Gestión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Estilos personalizados -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8fafc;
-            font-family: "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', sans-serif;
         }
-
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            position: fixed;
+            background-color: #3765a8ff;
+            color: white;
+            padding: 20px 15px;
+        }
+        .sidebar img {
+            width: 70%;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .content {
+            margin-left: 250px;
+            padding: 25px;
+        }
         .navbar {
-            background-color: #1f2937; /* gris oscuro elegante */
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            color: #fff !important;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-link {
-            color: #e5e7eb !important;
-            transition: 0.3s;
-            font-weight: 500;
-        }
-
-
-        .nav-link.text-danger:hover {
-            color: #ef4444 !important; 
-        }
-
-        main {
-            min-height: 80vh;
-        }
-
-        footer {
-            background-color: #1f2937;
-            color: #e5e7eb;
-            text-align: center;
-            padding: 15px 0;
-            margin-top: 40px;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Barra de navegación -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">Gestor Financiero</a>
-            <ul class="navbar-nav ms-auto d-flex flex-row gap-3">
-                <li class="nav-item">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                         Salir
-                        </button>
-                    </form>
-                </li>
-            </ul>
+
+    <div class="sidebar">
+        <img src="https://redecom.com.co/wp-content/uploads/2022/12/Proyecto-nuevo-7.png" alt="Nuevo Proyecto REDECOM">
+        <h5 class="text-center"> REDECOM</h5>
+        <hr>
+        <a href="{{ route('dashboard') }}"><i class="bi bi-house"></i> Inicio</a>
+        <a href="{{ route('usuarios.index') }}"><i class="bi bi-people"></i> Usuarios</a>
+        <a href="{{ route('materiales.index') }}"><i class="bi bi-box-seam"></i> Materiales</a>
+        <a href="{{ route('transacciones.index') }}"><i class="bi bi-cash-stack"></i> Transacciones</a>
+        <a href="{{ route('cuentas.index') }}"><i class="bi bi-wallet2"></i> Cuentas</a>
+        <a href="{{ route('ordenes.index') }}"><i class="bi bi-clipboard-check"></i> Órdenes</a>
+        <a href="{{ route('tecnicos.index') }}"><i class="bi bi-wrench-adjustable"></i> Técnicos</a>
+        <hr>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="btn btn-light w-100 mt-2" type="submit"> Cerrar sesión</button>
+        </form>
+    </div>
+
+    
+    <div class="content">
+        <div class="navbar d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">@yield('title', 'Panel de Control')</h4>
+            <span class="text-muted">Usuario: {{ Auth::user()->name ?? 'Invitado' }}</span>
         </div>
-    </nav>
 
-    <!-- Contenido principal -->
-    <main class="container mt-4">
-        @yield('content')
-    </main>
+        <main class="mt-4">
+            @yield('content')
+        </main>
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>© {{ date('Y') }} Gasto Financiero — Controla tus finanzas con facilidad.</p>
-    </footer>
-
-    <!-- Scripts Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

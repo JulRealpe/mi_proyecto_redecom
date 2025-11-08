@@ -2,46 +2,81 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\TransaccionController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\TecnicoController;
+use App\Http\Controllers\OrdenServicioController;
 
-// Página pública antes de iniciar sesión
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// Página pública (inicio antes del login)
 Route::get('/', function () {
     return view('welcome');
 });
 
-// 🔹 Dashboard principal después de iniciar sesión
+// Dashboard principal
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// 🔹 Alias: "home" apunta al mismo dashboard (para que el navbar funcione)
-Route::get('/home', function () {
-    return redirect()->route('dashboard');
-})->name('home');
+// Alias /home → redirige al dashboard
+Route::get('/home', fn() => redirect()->route('dashboard'))->name('home');
 
-// 🔹 Rutas protegidas (solo usuarios autenticados)
+// Grupo de rutas protegidas (solo autenticados)
 Route::middleware('auth')->group(function () {
 
-    // Perfil de usuario
+    /** Perfil del usuario autenticado */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD Categorías
-    Route::resource('categorias', CategoriaController::class);
+    /** Cuentas */
+    Route::resource('cuentas', CuentaController::class)
+        ->parameters(['cuentas' => 'cuenta']);
 
-    // CRUD Cuentas
-    Route::resource('cuentas', CuentaController::class);
+    /** Transacciones */
+    Route::resource('transacciones', TransaccionController::class)
+        ->parameters(['transacciones' => 'transaccion']); // ✅ Corrige el parámetro
 
-    // 🔹 CRUD Transacciones
-    Route::get('transacciones', [TransaccionController::class, 'index'])->name('transacciones.index');
-    Route::get('transacciones/crear', [TransaccionController::class, 'create'])->name('transacciones.create');
-    Route::post('transacciones', [TransaccionController::class, 'store'])->name('transacciones.store');
-    Route::get('transacciones/{transaccion}/editar', [TransaccionController::class, 'edit'])->name('transacciones.edit');
-    Route::put('transacciones/{transaccion}', [TransaccionController::class, 'update'])->name('transacciones.update');
-    Route::delete('transacciones/{transaccion}', [TransaccionController::class, 'destroy'])->name('transacciones.destroy');
+    /** Usuarios */
+    Route::resource('usuarios', UsuarioController::class)
+        ->parameters(['usuarios' => 'usuario']);
+
+    /** Materiales */
+    Route::resource('materiales', MaterialController::class)
+        ->parameters(['materiales' => 'material'])
+        ->names([
+            'index' => 'materiales.index',
+            'create' => 'materiales.create',
+            'store' => 'materiales.store',
+            'show' => 'materiales.show',
+            'edit' => 'materiales.edit',
+            'update' => 'materiales.update',
+            'destroy' => 'materiales.destroy',
+        ]);
+
+    /** Técnicos */
+    Route::resource('tecnicos', TecnicoController::class)
+        ->parameters(['tecnicos' => 'tecnico']);
+
+    /** Órdenes de Servicio */
+    Route::resource('ordenes', OrdenServicioController::class)
+        ->parameters(['ordenes' => 'orden'])
+        ->names([
+            'index' => 'ordenes.index',
+            'create' => 'ordenes.create',
+            'store' => 'ordenes.store',
+            'show' => 'ordenes.show',
+            'edit' => 'ordenes.edit',
+            'update' => 'ordenes.update',
+            'destroy' => 'ordenes.destroy',
+        ]);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

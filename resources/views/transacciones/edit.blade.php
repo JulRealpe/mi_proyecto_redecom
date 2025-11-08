@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">✏️ Editar Transacción</h2>
+    <h2 class="mb-4 text-center"> Editar Transacción</h2>
 
     <form action="{{ route('transacciones.update', $transaccion->id) }}" method="POST">
         @csrf
@@ -38,8 +38,8 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-success">💾 Guardar Cambios</button>
-            <a href="{{ route('transacciones.index') }}" class="btn btn-secondary">⬅️ Volver</a>
+            <button type="submit" class="btn btn-success"> Guardar Cambios</button>
+            <a href="{{ route('transacciones.index') }}" class="btn btn-secondary"> Volver</a>
         </div>
     </form>
 </div>
