@@ -4,14 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrdenesServicioTable extends Migration
+return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('ordenes_servicio', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_cliente');
-            $table->string('direccion');
+            $table->string('nombre_cliente');  // ✅ Agregar este
+            $table->string('direccion');       // ✅ Este también
             $table->date('fecha_inicio')->nullable();
             $table->date('fecha_fin')->nullable();
             $table->text('observaciones')->nullable();
@@ -19,8 +19,8 @@ class CreateOrdenesServicioTable extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('ordenes_servicio');
     }
-}
+};

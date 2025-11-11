@@ -13,11 +13,13 @@ class Usuario extends Model
 
     protected $fillable = [
         'nombre',
-        'correo',
+        'email',
         'contraseña',
         'rol',
-        'estado',
+        'estado'
     ];
 
-    public $timestamps = true; // porque tu tabla tiene created_at y updated_at
+    protected $hidden = [
+        'contraseña'
+    ];
 }

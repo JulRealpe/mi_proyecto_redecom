@@ -15,21 +15,21 @@ class Material extends Model
         'nombre',
         'cantidad',
         'estado',
-        'categoria_id', // ✅ si tu tabla materiales tiene esta columna
+        'categoria_id',
     ];
 
     /**
-     * Relación muchos a muchos con las órdenes de servicio.
+     * Relación muchos a muchos con órdenes de servicio.
      */
     public function ordenes()
     {
-        return $this->belongsToMany(OrdenServicio::class, 'material_orden')
+        return $this->belongsToMany(OrdenServicio::class, 'ordenes_materiales', 'material_id', 'orden_id')
                     ->withPivot('cantidad')
                     ->withTimestamps();
     }
 
     /**
-     * Relación con la categoría del material.
+     * Relación con categoría.
      */
     public function categoria()
     {
