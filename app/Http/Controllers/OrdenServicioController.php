@@ -6,125 +6,170 @@ use App\Models\OrdenServicio;
 use App\Models\Tecnico;
 use App\Models\Material;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class OrdenServicioController extends Controller
 {
-    /**
-     * Mostrar todas las órdenes de servicio.
-     */
+    // Listado de órdenes
     public function index()
     {
         $ordenes = OrdenServicio::with(['tecnicos', 'materiales'])->get();
         return view('ordenes.index', compact('ordenes'));
     }
 
-    /**
-     * Mostrar formulario para crear nueva orden.
-     */
+    // Formulario para crear nueva orden
     public function create()
     {
-        $tecnicos = Tecnico::where('estado', 'activo')->get();
-        $materiales = Material::with('categoria')->get(); // ✅ si cada material pertenece a una categoría
+        $tecnicos = Tecnico::all();
+        $materiales = Material::all();
         return view('ordenes.create', compact('tecnicos', 'materiales'));
     }
 
-    /**
-     * Guardar una nueva orden en la base de datos.
-     */
+    // Guardar nueva orden
     public function store(Request $request)
     {
         $request->validate([
-            'nombre_cliente' => 'required|string|max:150',
+            'nombre_cliente' => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-            'observaciones' => 'nullable|string',
-            'tecnicos' => 'nullable|array',
-            'materiales' => 'nullable|array',
-            'materiales.*.cantidad' => 'nullable|integer|min:1',
+            'estado' => 'required|string|max:50',
+            // CORRECCIÓN 1: Observaciones (plural)
+            'observaciones' => 'nullable|string|max:500', 
+            'tecnicos' => 'array',
+            // CORRECCIÓN 2: Nuevo nombre de input de materiales
+            'cantidades_materiales' => 'nullable|array',
         ]);
 
-        // ✅ Crear la orden
-        $orden = OrdenServicio::create($request->only([
-            'nombre_cliente', 'direccion', 'fecha_inicio', 'fecha_fin', 'observaciones'
-        ]));
+        $orden = OrdenServicio::create([
+            'nombre_cliente' => $request->nombre_cliente,
+            'direccion' => $request->direccion,
+            'estado' => $request->estado,
+            // CORRECCIÓN 3: Observaciones (plural)
+            'observaciones' => $request->observaciones,
+        ]);
 
-        // ✅ Asignar técnicos si existen
-        if ($request->has('tecnicos') && is_array($request->tecnicos)) {
+        // Relacionar técnicos
+        if ($request->tecnicos) {
             $orden->tecnicos()->sync($request->tecnicos);
         }
 
-        // ✅ Asignar materiales con cantidad
-        if ($request->has('materiales') && is_array($request->materiales)) {
-            $syncData = [];
-            foreach ($request->materiales as $id => $data) {
-                $cantidad = isset($data['cantidad']) && $data['cantidad'] > 0 ? (int) $data['cantidad'] : 0;
-                if ($cantidad > 0) {
-                    $syncData[$id] = ['cantidad' => $cantidad];
-                }
-            }
-            $orden->materiales()->sync($syncData);
-        }
+        // CORRECCIÓN 4: Usar la nueva lógica para materiales
+        $this->syncMaterials($orden, $request->input('cantidades_materiales', []));
 
-        return redirect()->route('ordenes.index')->with('success', 'Orden de servicio creada correctamente.');
+        return redirect()->route('ordenes.index')->with('success', 'Orden creada correctamente.');
     }
 
-    /**
-     * Mostrar formulario de edición.
-     */
-    public function edit(OrdenServicio $orden)
+    // Mostrar detalle de una orden
+    public function show(OrdenServicio $orden)
     {
-        $tecnicos = Tecnico::where('estado', 'activo')->get();
-        $materiales = Material::with('categoria')->get(); // ✅ Mostrar agrupados por categoría
         $orden->load(['tecnicos', 'materiales']);
+        return view('ordenes.show', compact('orden'));
+    }
+
+    // Editar una orden
+    public function edit($id)
+    {
+        $orden = OrdenServicio::with(['tecnicos', 'materiales'])->findOrFail($id);
+        $tecnicos = Tecnico::all();
+        $materiales = Material::all();
+
         return view('ordenes.edit', compact('orden', 'tecnicos', 'materiales'));
     }
 
-    /**
-     * Actualizar una orden existente.
-     */
-    public function update(Request $request, OrdenServicio $orden)
+    // Actualizar una orden
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'nombre_cliente' => 'required|string|max:150',
+            'nombre_cliente' => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-            'observaciones' => 'nullable|string',
-            'tecnicos' => 'nullable|array',
-            'materiales' => 'nullable|array',
-            'materiales.*.cantidad' => 'nullable|integer|min:1',
+            'estado' => 'required|string|max:50',
+            // CORRECCIÓN 5: Observaciones (plural)
+            'observaciones' => 'nullable|string|max:500', 
+            'tecnicos' => 'array',
+            // CORRECCIÓN 6: Nuevo nombre de input de materiales
+            'cantidades_materiales' => 'nullable|array', 
         ]);
 
-        // ✅ Actualizar orden
-        $orden->update($request->only([
-            'nombre_cliente', 'direccion', 'fecha_inicio', 'fecha_fin', 'observaciones'
-        ]));
+        $orden = OrdenServicio::findOrFail($id);
+        $orden->update([
+            'nombre_cliente' => $request->nombre_cliente,
+            'direccion' => $request->direccion,
+            'estado' => $request->estado,
+            // CORRECCIÓN 7: Observaciones (plural)
+            'observaciones' => $request->observaciones,
+        ]);
 
-        // ✅ Actualizar técnicos
+        // Actualizar técnicos
         $orden->tecnicos()->sync($request->tecnicos ?? []);
 
-        // ✅ Actualizar materiales y cantidades
-        $syncData = [];
-        if ($request->has('materiales') && is_array($request->materiales)) {
-            foreach ($request->materiales as $id => $data) {
-                $cantidad = isset($data['cantidad']) && $data['cantidad'] > 0 ? (int) $data['cantidad'] : 0;
-                if ($cantidad > 0) {
-                    $syncData[$id] = ['cantidad' => $cantidad];
-                }
-            }
-        }
-        $orden->materiales()->sync($syncData);
+        // CORRECCIÓN 8: Usar la nueva lógica para materiales
+        $this->syncMaterials($orden, $request->input('cantidades_materiales', []));
 
-        return redirect()->route('ordenes.index')->with('success', 'Orden de servicio actualizada correctamente.');
+        return redirect()->route('ordenes.index')->with('success', 'Orden actualizada correctamente.');
     }
 
-    /**
-     * Eliminar una orden de servicio.
-     */
-    public function destroy(OrdenServicio $orden)
+    // Eliminar una orden
+    public function destroy($id)
     {
+        $orden = OrdenServicio::findOrFail($id);
+        $orden->tecnicos()->detach();
+        $orden->materiales()->detach();
         $orden->delete();
-        return redirect()->route('ordenes.index')->with('success', 'Orden de servicio eliminada correctamente.');
+
+        return redirect()->route('ordenes.index')->with('success', 'Orden eliminada correctamente.');
+    }
+
+    // ** NUEVA FUNCIÓN AUXILIAR **
+    /**
+     * Procesa y sincroniza los materiales con la orden, excluyendo las cantidades de 0.
+     */
+    protected function syncMaterials(OrdenServicio $orden, array $cantidades)
+    {
+        $materialesSincronizar = [];
+        
+        foreach ($cantidades as $materialId => $cantidad) {
+            $cantidad_int = (int)$cantidad;
+            // Solo incluimos el material si la cantidad es mayor a 0
+            if ($cantidad_int > 0) {
+                $materialesSincronizar[$materialId] = ['cantidad' => $cantidad_int];
+            }
+        }
+        $orden->materiales()->sync($materialesSincronizar);
+    }
+    
+    // Exportar CSV
+    public function exportExcel(OrdenServicio $orden)
+    {
+        $orden->load(['tecnicos', 'materiales']);
+        $filename = "orden_{$orden->id}.csv";
+
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=\"$filename\"",
+        ];
+
+        return response()->stream(function() use ($orden) {
+            $file = fopen('php://output', 'w');
+
+            // Cabeceras
+            fputcsv($file, ['ID', 'Cliente', 'Dirección', 'Estado', 'Observaciones', 'Técnicos', 'Materiales']);
+
+            // Datos
+            $tecnicos = $orden->tecnicos->pluck('nombre')->implode(', ');
+            $materiales = $orden->materiales
+                ->map(fn($m) => $m->nombre . ' x ' . $m->pivot->cantidad)
+                ->implode(', ');
+
+            fputcsv($file, [
+                $orden->id,
+                $orden->nombre_cliente,
+                $orden->direccion,
+                $orden->estado,
+                $orden->observaciones, // <-- CORRECCIÓN FINAL
+                $tecnicos,
+                $materiales
+            ]);
+
+            fclose($file);
+        }, 200, $headers);
     }
 }

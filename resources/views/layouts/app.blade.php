@@ -50,7 +50,7 @@
 
     <div class="sidebar">
         <img src="https://redecom.com.co/wp-content/uploads/2022/12/Proyecto-nuevo-7.png" alt="Nuevo Proyecto REDECOM">
-        <h5 class="text-center"> REDECOM</h5>
+        <h5 class="text-center">REDECOM</h5>
         <hr>
         <a href="{{ route('dashboard') }}"><i class="bi bi-house"></i> Inicio</a>
         <a href="{{ route('usuarios.index') }}"><i class="bi bi-people"></i> Usuarios</a>
@@ -59,14 +59,14 @@
         <a href="{{ route('cuentas.index') }}"><i class="bi bi-wallet2"></i> Cuentas</a>
         <a href="{{ route('ordenes.index') }}"><i class="bi bi-clipboard-check"></i> Órdenes</a>
         <a href="{{ route('tecnicos.index') }}"><i class="bi bi-wrench-adjustable"></i> Técnicos</a>
+        <a href="{{ route('informes.index') }}"><i class="bi bi-file-earmark-text"></i> Informes</a>
         <hr>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button class="btn btn-light w-100 mt-2" type="submit"> Cerrar sesión</button>
+            <button class="btn btn-light w-100 mt-2" type="submit">Cerrar sesión</button>
         </form>
     </div>
 
-    
     <div class="content">
         <div class="navbar d-flex justify-content-between align-items-center">
             <h4 class="mb-0">@yield('title', 'Panel de Control')</h4>

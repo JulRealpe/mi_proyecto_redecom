@@ -4,23 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
-    // 🔹 Mostrar la lista de usuarios
     public function index()
     {
         $usuarios = Usuario::all();
         return view('usuarios.index', compact('usuarios'));
     }
 
-    // 🔹 Mostrar formulario para crear usuario
     public function create()
     {
         return view('usuarios.create');
     }
 
-    // 🔹 Guardar nuevo usuario
     public function store(Request $request)
     {
         $request->validate([
@@ -28,22 +26,23 @@ class UsuarioController extends Controller
             'email' => 'required|email|unique:usuarios,email',
             'contraseña' => 'required|string|min:6',
             'rol' => 'required|string|max:50',
-            'estado' => 'required|string|max:20',
         ]);
 
-        Usuario::create($request->all());
+        $datos = $request->all();
+        $datos['contraseña'] = Hash::make($request->contraseña);
+        $datos['estado'] = 'activo';
+
+        Usuario::create($datos);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
     }
 
-    // 🔹 Editar usuario
     public function edit($id)
     {
         $usuario = Usuario::findOrFail($id);
         return view('usuarios.edit', compact('usuario'));
     }
 
-    // 🔹 Actualizar usuario
     public function update(Request $request, $id)
     {
         $usuario = Usuario::findOrFail($id);
@@ -56,12 +55,37 @@ class UsuarioController extends Controller
             'estado' => 'required|string|max:20',
         ]);
 
-        $usuario->update($request->all());
+        $datos = $request->all();
+
+        if ($request->filled('contraseña')) {
+            $datos['contraseña'] = Hash::make($request->contraseña);
+        } else {
+            unset($datos['contraseña']);
+        }
+
+        $usuario->update($datos);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
-    // 🔹 Eliminar usuario
+    public function inactivar($id)
+    {
+        $usuario = Usuario::findOrFail($id);
+        $usuario->estado = 'inactivo';
+        $usuario->save();
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario inactivado correctamente.');
+    }
+
+    public function activar($id)
+    {
+        $usuario = Usuario::findOrFail($id);
+        $usuario->estado = 'activo';
+        $usuario->save();
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario activado correctamente.');
+    }
+
     public function destroy($id)
     {
         $usuario = Usuario::findOrFail($id);

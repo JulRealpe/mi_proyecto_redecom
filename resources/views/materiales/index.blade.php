@@ -10,8 +10,8 @@
 
     <a href="{{ route('materiales.create') }}" class="btn btn-primary mb-3">Registrar Nuevo Material</a>
 
-    <table class="table table-bordered table-striped">
-        <thead>
+    <table class="table table-bordered table-striped text-center align-middle">
+        <thead class="table-primary">
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
@@ -26,10 +26,24 @@
                     <td>{{ $material->id }}</td>
                     <td>{{ $material->nombre }}</td>
                     <td>{{ $material->cantidad }}</td>
-                    <td>{{ ucfirst($material->estado) }}</td>
                     <td>
-                        <a href="{{ route('materiales.edit', $material) }}" class="btn btn-warning btn-sm">Editar</a>
-                        <form action="{{ route('materiales.destroy', $material) }}" method="POST" class="d-inline"
+                        <span class="badge {{ $material->estado == 'activo' ? 'bg-success' : 'bg-danger' }}">
+                            {{ ucfirst($material->estado) }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ route('materiales.show', $material->id) }}" class="btn btn-info btn-sm">Ver</a>
+                        <a href="{{ route('materiales.edit', $material->id) }}" class="btn btn-warning btn-sm">Editar</a>
+
+                        <form action="{{ route('materiales.toggle', $material->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-sm {{ $material->estado == 'activo' ? 'btn-secondary' : 'btn-success' }}">
+                                {{ $material->estado == 'activo' ? 'Inactivar' : 'Activar' }}
+                            </button>
+                        </form>
+
+                        <form action="{{ route('materiales.destroy', $material->id) }}" method="POST" class="d-inline"
                               onsubmit="return confirm('¿Estás seguro de eliminar este material?');">
                             @csrf
                             @method('DELETE')

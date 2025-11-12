@@ -30,13 +30,16 @@
                    value="{{ old('cantidad') }}" placeholder="Ejemplo: 10">
         </div>
 
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <div class="form-group mb-3">
-    <label for="estado">Estado</label>
+        <label for="estado">Estado</label>
     <select name="estado" id="estado" class="form-control">
         <option value="activo" selected>Activo</option>
         <option value="inactivo">Inactivo</option>
     </select>
+    <br><br>
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <div class="form-group mb-3">
+    
 </div>
 
         <a href="{{ route('materiales.index') }}" class="btn btn-secondary">Volver</a>

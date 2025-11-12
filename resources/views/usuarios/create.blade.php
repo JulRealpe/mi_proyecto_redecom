@@ -28,8 +28,8 @@
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Correo</label>
-                        <input type="email" name="correo" class="form-control" placeholder="correo@redecom.com" required>
-                        @error('correo')
+                        <input type="email" name="email" class="form-control" placeholder="correo@redecom.com" required>
+                        @error('email')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
@@ -56,18 +56,6 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Estado</label>
-                        <select name="estado" class="form-select" required>
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
-                        </select>
-                        @error('estado')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
 
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-primary px-5">

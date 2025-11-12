@@ -59,16 +59,6 @@
                         @enderror
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Estado</label>
-                        <select name="estado" class="form-select" required>
-                            <option value="activo" {{ old('estado', $usuario->estado) == 'activo' ? 'selected' : '' }}>Activo</option>
-                            <option value="inactivo" {{ old('estado', $usuario->estado) == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
-                        </select>
-                        @error('estado')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
                 </div>
 
                 <div class="text-center mt-4">

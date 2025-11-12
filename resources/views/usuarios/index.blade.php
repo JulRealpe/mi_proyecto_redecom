@@ -8,18 +8,16 @@
 </head>
 <body class="bg-light">
 
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Redecom Ingeniería SAS</a>
-        <a href="{{ route('usuarios.create') }}" class="btn btn-light btn-sm"> Nuevo Usuario</a>
+        <a href="{{ route('usuarios.create') }}" class="btn btn-light btn-sm">Nuevo Usuario</a>
     </div>
 </nav>
 
 <div class="container mt-4">
     <h3 class="text-primary mb-3 text-center">Gestión de Usuarios</h3>
 
-    
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">
             {{ session('success') }}
@@ -27,7 +25,6 @@
         </div>
     @endif
 
-    
     <div class="card shadow-sm">
         <div class="card-body">
             <table class="table table-bordered table-hover align-middle text-center">
@@ -46,7 +43,7 @@
                         <tr>
                             <td>{{ $usuario->id }}</td>
                             <td>{{ $usuario->nombre }}</td>
-                            <td>{{ $usuario->correo }}</td>
+                            <td>{{ $usuario->email }}</td>
                             <td>{{ ucfirst($usuario->rol) }}</td>
                             <td>
                                 <span class="badge {{ $usuario->estado == 'activo' ? 'bg-success' : 'bg-danger' }}">
@@ -54,21 +51,22 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-sm btn-warning">✏️ Editar</a>
+                                <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-sm btn-warning">Editar</a>
+
+                                <form action="{{ $usuario->estado == 'activo' ? route('usuarios.inactivar', $usuario->id) : route('usuarios.activar', $usuario->id) }}" 
+                                      method="POST" style="display:inline-block;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm {{ $usuario->estado == 'activo' ? 'btn-secondary' : 'btn-success' }}">
+                                        {{ $usuario->estado == 'activo' ? 'Inactivar' : 'Activar' }}
+                                    </button>
+                                </form>
 
                                 <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')"> Eliminar</button>
-                                </form>
-
-                                
-                                <form action="{{ route('usuarios.update', $usuario->id) }}" method="POST" style="display:inline-block;">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="estado" value="{{ $usuario->estado == 'activo' ? 'inactivo' : 'activo' }}">
-                                    <button type="submit" class="btn btn-sm {{ $usuario->estado == 'activo' ? 'btn-secondary' : 'btn-success' }}">
-                                        {{ $usuario->estado == 'activo' ? 'Inactivar' : 'Activar' }}
+                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
+                                        Eliminar
                                     </button>
                                 </form>
                             </td>

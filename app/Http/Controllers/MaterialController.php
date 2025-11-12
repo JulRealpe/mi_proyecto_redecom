@@ -7,26 +7,17 @@ use Illuminate\Http\Request;
 
 class MaterialController extends Controller
 {
-    /**
-     * Mostrar todos los materiales.
-     */
     public function index()
     {
         $materiales = Material::all();
         return view('materiales.index', compact('materiales'));
     }
 
-    /**
-     * Mostrar el formulario para crear un nuevo material.
-     */
     public function create()
     {
         return view('materiales.create');
     }
 
-    /**
-     * Guardar un nuevo material en la base de datos.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -48,17 +39,11 @@ class MaterialController extends Controller
             ->with('success', 'Material creado correctamente.');
     }
 
-    /**
-     * Mostrar formulario de edición.
-     */
     public function edit(Material $material)
     {
         return view('materiales.edit', compact('material'));
     }
 
-    /**
-     * Actualizar un material existente.
-     */
     public function update(Request $request, Material $material)
     {
         $validated = $request->validate([
@@ -80,14 +65,25 @@ class MaterialController extends Controller
             ->with('success', 'Material actualizado correctamente.');
     }
 
-    /**
-     * Eliminar un material.
-     */
+    public function toggle(Material $material)
+    {
+        $material->estado = $material->estado === 'activo' ? 'inactivo' : 'activo';
+        $material->save();
+
+        return redirect()->route('materiales.index')
+            ->with('success', 'Estado del material actualizado correctamente.');
+    }
+
     public function destroy(Material $material)
     {
         $material->delete();
 
         return redirect()->route('materiales.index')
             ->with('success', 'Material eliminado correctamente.');
+    }
+
+    public function show(Material $material)
+    {
+        return view('materiales.show', compact('material'));
     }
 }
