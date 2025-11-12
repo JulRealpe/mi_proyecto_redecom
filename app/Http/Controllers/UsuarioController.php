@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
 {
     public function index()
     {
-        $usuarios = Usuario::all();
+        $usuarios = Usuario::orderBy('nombre')->paginate(10);
         return view('usuarios.index', compact('usuarios'));
     }
 
@@ -22,19 +23,30 @@ class UsuarioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100',
-            'email' => 'required|email|unique:usuarios,email',
-            'contraseña' => 'required|string|min:6',
-            'rol' => 'required|string|max:50',
+            'nombre' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:usuarios',
+                'ends_with:@redecom.com',
+            ],
+            'password' => 'required|string|min:8|confirmed',
+            'rol' => ['required', Rule::in(['administracion', 'supervisor', 'tecnico'])],
         ]);
 
-        $datos = $request->all();
-        $datos['contraseña'] = Hash::make($request->contraseña);
-        $datos['estado'] = 'activo';
+        Usuario::create([
+            'nombre' => $request->nombre,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'rol' => $request->rol,
+            'estado' => 'activo',
+        ]);
 
-        Usuario::create($datos);
-
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario registrado correctamente.');
     }
 
     public function edit($id)
@@ -48,33 +60,51 @@ class UsuarioController extends Controller
         $usuario = Usuario::findOrFail($id);
 
         $request->validate([
-            'nombre' => 'required|string|max:100',
-            'email' => 'required|email|unique:usuarios,email,' . $usuario->id,
-            'contraseña' => 'nullable|string|min:6',
-            'rol' => 'required|string|max:50',
-            'estado' => 'required|string|max:20',
+            'nombre' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('usuarios')->ignore($usuario->id),
+            ],
+            'rol' => ['required', Rule::in(['administracion', 'supervisor', 'tecnico'])],
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $datos = $request->all();
+        $usuario->update([
+            'nombre' => $request->nombre,
+            'email' => $request->email,
+            'rol' => $request->rol,
+            'password' => $request->filled('password')
+                ? Hash::make($request->password)
+                : $usuario->password,
+        ]);
 
-        if ($request->filled('contraseña')) {
-            $datos['contraseña'] = Hash::make($request->contraseña);
-        } else {
-            unset($datos['contraseña']);
-        }
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario actualizado correctamente.');
+    }
 
-        $usuario->update($datos);
+    public function destroy($id)
+    {
+        $usuario = Usuario::findOrFail($id);
+        $usuario->delete();
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario eliminado correctamente.');
     }
 
     public function inactivar($id)
     {
         $usuario = Usuario::findOrFail($id);
-        $usuario->estado = 'inactivo';
+        $usuario->estado = $usuario->estado === 'activo' ? 'inactivo' : 'activo';
         $usuario->save();
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario inactivado correctamente.');
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Estado del usuario actualizado correctamente.');
     }
 
     public function activar($id)
@@ -83,14 +113,8 @@ class UsuarioController extends Controller
         $usuario->estado = 'activo';
         $usuario->save();
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario activado correctamente.');
-    }
-
-    public function destroy($id)
-    {
-        $usuario = Usuario::findOrFail($id);
-        $usuario->delete();
-
-        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario activado correctamente.');
     }
 }

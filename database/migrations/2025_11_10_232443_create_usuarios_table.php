@@ -11,9 +11,9 @@ return new class extends Migration {
             $table->id();
             $table->string('nombre', 100);
             $table->string('email')->unique();
-            $table->string('contraseña'); // cambiamos de 'password' a 'contraseña'
+            $table->string('password'); // ✅ Campo de contraseña encriptada (nombre estándar)
             $table->string('rol', 50);
-            $table->string('estado', 20)->default('Activo');
+            $table->string('estado', 20)->default('activo'); // Mantiene coherencia con tu controlador
             $table->timestamps();
         });
     }

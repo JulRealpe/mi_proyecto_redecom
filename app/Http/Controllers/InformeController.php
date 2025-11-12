@@ -10,7 +10,7 @@ class InformeController extends Controller
     // Lista todas las órdenes para generar informes
     public function index()
     {
-        $ordenes = OrdenServicio::with(['tecnicos', 'materiales'])->get();
+        $ordenes = OrdenServicio::with(['usuario', 'materiales'])->get();
         return view('informes.index', compact('ordenes'));
     }
 

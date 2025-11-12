@@ -10,7 +10,7 @@
         <div class="card-body px-5 py-4">
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    <strong> Error:</strong> Revisa los campos marcados.
+                    <strong>Error:</strong> Revisa los campos marcados.
                 </div>
             @endif
 
@@ -29,19 +29,21 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Correo</label>
-                        <input type="email" name="correo" class="form-control" 
-                               value="{{ old('correo', $usuario->correo) }}" required>
-                        @error('correo')
+                        <label class="form-label fw-semibold">Correo electrónico</label>
+                        <input type="email" name="email" class="form-control" 
+                               value="{{ old('email', $usuario->email) }}" required>
+                        @error('email')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Contraseña (dejar en blanco si no desea cambiarla)</label>
-                    <input type="password" name="contraseña" class="form-control" placeholder="********">
-                    @error('contraseña')
+                    <label class="form-label fw-semibold">
+                        Contraseña (déjala en blanco si no deseas cambiarla)
+                    </label>
+                    <input type="password" name="password" class="form-control" placeholder="********">
+                    @error('password')
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
@@ -58,15 +60,14 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-
                 </div>
 
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-primary px-5">
-                         Actualizar Usuario
+                        Actualizar Usuario
                     </button>
                     <a href="{{ route('usuarios.index') }}" class="btn btn-secondary ms-2">
-                         Cancelar
+                        Cancelar
                     </a>
                 </div>
             </form>

@@ -21,11 +21,15 @@ class Material extends Model
     /**
      * Relación muchos a muchos con órdenes de servicio.
      */
-    public function ordenes()
+    public function ordenesServicio()
     {
-        return $this->belongsToMany(OrdenServicio::class, 'ordenes_materiales', 'material_id', 'orden_id')
-                    ->withPivot('cantidad')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            OrdenServicio::class,
+            'ordenes_materiales',
+            'material_id',
+            'orden_id'
+        )->withPivot('cantidad')
+         ->withTimestamps();
     }
 
     /**

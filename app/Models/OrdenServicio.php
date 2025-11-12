@@ -14,27 +14,38 @@ class OrdenServicio extends Model
     protected $fillable = [
         'nombre_cliente',
         'direccion',
-        'fecha_inicio',
-        'fecha_fin',
+        'estado',
         'observaciones',
-        'estado'
+        'usuario_id',
     ];
 
-    public function tecnicos()
+    // Relación con usuario (técnico)
+    public function usuario()
     {
-        return $this->belongsToMany(Usuario::class, 'ordenes_tecnicos', 'orden_id', 'tecnico_id')
-                    ->withTimestamps();
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
+    // Relación muchos a muchos con materiales
     public function materiales()
     {
-        return $this->belongsToMany(Material::class, 'ordenes_materiales', 'orden_id', 'material_id')
-                    ->withPivot('cantidad')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            Material::class,
+            'ordenes_materiales',
+            'orden_id',
+            'material_id'
+        )
+        ->withPivot('cantidad')
+        ->withTimestamps();
     }
 
-    public function informes()
+    // Relación muchos a muchos con asistencias
+    public function asistencias()
     {
-        return $this->hasMany(Informe::class, 'orden_id');
+        return $this->belongsToMany(
+            Asistencias::class,
+            'asistencia_orden',
+            'orden_id',
+            'asistencia_id'
+        );
     }
 }

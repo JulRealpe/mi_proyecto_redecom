@@ -3,23 +3,34 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
     use HasFactory;
-
-    protected $table = 'usuarios';
 
     protected $fillable = [
         'nombre',
         'email',
-        'contraseña',
+        'password',
         'rol',
-        'estado'
+        'estado',
     ];
 
     protected $hidden = [
-        'contraseña'
+        'password',
+        'remember_token',
     ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    /**
+     * Relación: un usuario puede tener varias órdenes de servicio.
+     */
+    public function ordenesServicio()
+    {
+        return $this->hasMany(OrdenServicio::class, 'usuario_id');
+    }
 }
